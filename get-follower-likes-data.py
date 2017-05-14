@@ -6,9 +6,15 @@
 from InstagramAPI import InstagramAPI
 import config
 
+#
+# Log in to API
+#
 API = InstagramAPI(config.user, config.password)
 API.login()
 
+#
+# Get list of everyone I'm following
+#
 API.getUsernameInfo(config.user_id)
 API.LastJson
 following   = []
@@ -21,15 +27,27 @@ while next_max_id:
     following.extend ( API.LastJson.get('users',[]))
     next_max_id = API.LastJson.get('next_max_id','')
 
-print len(following)
 unique_following = {
     f['pk'] : f
     for f in following
 }
-print len(unique_following)
-
-print
-
 followers = unique_following.values()
+follower_usernames = map(lambda x: x["username"], followers)
 
-print map(lambda x: x["username"], followers)
+# Temp trim
+followers = followers[:5]
+
+print followers 
+
+#
+# @TODO: Filter out everyone with fewer than 50 or more than 1,000 followers
+#
+
+#
+# For each image that someone I'm following has posted, download
+# >>> Image post date/time
+# >>> Number of likes
+# and save alongside the username ((just in case))
+#
+
+
