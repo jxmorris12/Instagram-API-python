@@ -5,14 +5,22 @@
 
 import config
 import csv
-from InstagramAPI import InstagramAPI
+import datetime
 import random
 import time
 
+from InstagramAPI import InstagramAPI
+
+
+max_followers = 10
 # unicode helper
 def _u(s):
   return s.encode('utf-8').strip()
 
+# datetime helper
+def _seconds_from_midnight(d):
+  t = datetime.datetime.fromtimestamp(int(d))
+  return (t.hour * 60 * 60) + (t.minute * 60) + t.second
 #
 # Log in to API
 #
@@ -41,8 +49,8 @@ unique_following = {
 followers = unique_following.values()
 follower_usernames = map(lambda x: x["username"], followers)
 
-# (Temporary) trim
-followers = followers[:100]
+# trim data set to <max_followers>
+followers = followers[:max_followers]
 
 follower_ids = map(lambda x: x["pk"], followers)
 
@@ -80,8 +88,10 @@ for user_id in follower_ids:
   # ['taken-at', 'like-count', 'user_id', 'caption']
   for pic in pics: 
     a = []
+    taken_at = pic.get('taken_at')
+    a.append(taken_at)
+    a.append(_seconds_from_midnight(taken_at))
     a.append(pic.get('like_count'))
-    a.append(pic.get('taken_at'))
     a.append(user_id)
     try:
       a.append(_u(pic.get('caption').get('text')))
@@ -94,7 +104,7 @@ for user_id in follower_ids:
 #
 with open(outfile_name, 'wb') as csvfile:
   spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-  spamwriter.writerow(['taken-at', 'like-count', 'user_id', 'caption'])
+  spamwriter.writerow(['taken-at', 'seconds-from-midnight', 'like-count', 'user_id', 'caption'])
   for data_row in data:
     spamwriter.writerow(data_row)
 
