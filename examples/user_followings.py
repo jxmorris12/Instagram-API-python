@@ -3,13 +3,14 @@ import time
 from datetime import datetime
 
 username = ''
-pwd      = ''
-user_id  = '19343908'
-
+pwd = ''
+user_id  = ''
 
 API = InstagramAPI(username,pwd)
 API.login()
 
+API.getUsernameInfo(user_id)
+API.LastJson
 following   = []
 next_max_id = True
 while next_max_id:

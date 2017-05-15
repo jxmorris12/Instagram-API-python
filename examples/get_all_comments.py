@@ -13,7 +13,7 @@ count      = 100
 
 API = InstagramAPI(username,pwd)
 API.login()
-
+API.getUsernameInfo()
 has_more_comments = True
 max_id            = ''
 comments          = []
