@@ -34,7 +34,7 @@ unique_following = {
 followers = unique_following.values()
 follower_usernames = map(lambda x: x["username"], followers)
 
-# Temp trim
+# (Temporary) trim
 followers = followers[:5]
 
 print followers 

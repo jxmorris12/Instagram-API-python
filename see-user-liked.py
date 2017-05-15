@@ -13,17 +13,26 @@ API = InstagramAPI(config.user, config.password)
 API.login()
 
 
-API.getLikedMedia("")
-print API.LastJson
-#
-# @TODO: Filter out everyone with fewer than 50 or more than 1,000 followers
-#
+user_id = config.user_id
 
-#
-# For each image that someone I'm following has posted, download
-# >>> Image post date/time
-# >>> Number of likes
-# and save alongside the username ((just in case))
-#
+pics = []
+next_max_id = True
+while next_max_id:
+  # first iteration hack
+  if next_max_id == True: next_max_id=''
+  _ = API.getUserFeed(user_id,maxid=next_max_id)
+  pics.extend ( API.LastJson.get('items',[]))
+  next_max_id = API.LastJson.get('next_max_id','')
 
 
+for pic in pics: 
+  d = {}
+  d['like_count'] = pic.get('like_count')
+  d['taken_at']  = pic.get('taken_at')
+  d["user_id"] = user_id
+  try:
+    d['caption'] = pic.get('caption').get('text')
+  except AttributeError:
+    d['caption'] = ""
+  print d
+# print map(lambda x: x["text"], pics)
