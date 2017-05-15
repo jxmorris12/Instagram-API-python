@@ -3,8 +3,11 @@
 #
 # Use text editor to edit the script and type in valid Instagram username/password
 
-from InstagramAPI import InstagramAPI
+import csv
 import config
+import json
+
+from InstagramAPI import InstagramAPI
 
 #
 # Log in to API
@@ -13,6 +16,7 @@ API = InstagramAPI(config.user, config.password)
 API.login()
 
 
+outfile_name = "out-test.csv"
 user_id = config.user_id
 
 pics = []
@@ -25,14 +29,23 @@ while next_max_id:
   next_max_id = API.LastJson.get('next_max_id','')
 
 
+data = []
+# ['taken-at', 'like-count', 'user_id', 'caption']
 for pic in pics: 
-  d = {}
-  d['like_count'] = pic.get('like_count')
-  d['taken_at']  = pic.get('taken_at')
-  d["user_id"] = user_id
+  a = []
+  a.append(pic.get('like_count'))
+  a.append(pic.get('taken_at'))
+  a.append(user_id)
   try:
-    d['caption'] = pic.get('caption').get('text')
+    a.append(str( pic.get('caption').get('text') ))
   except AttributeError:
-    d['caption'] = ""
-  print d
-# print map(lambda x: x["text"], pics)
+    a.append("")
+  data.append(a)
+
+print a
+
+with open(outfile_name, 'wb') as csvfile:
+  spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+  spamwriter.writerow(['taken-at', 'like-count', 'user_id', 'caption'])
+  for data_row in data:
+    spamwriter.writerow(data_row)
