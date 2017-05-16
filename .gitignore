@@ -3,3 +3,5 @@ config.py
 *.pyc
 *.swp
 .Rapp.history
+*.twb
+*.twbr
