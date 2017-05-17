@@ -13,7 +13,7 @@ from InstagramAPI import InstagramAPI
 
 min_followers = 20
 max_followers = 2000
-datum_limit = 50
+datum_limit = 10000
 
 
 # unicode helper
@@ -27,7 +27,7 @@ def _seconds_from_midnight(d):
 
 # sleep to slightly throttle requests to Instagram. Just being polite.
 def _wait():
-  time.sleep(1.0 + random.random())
+  time.sleep(4.0 + random.random())
 
 #
 # Log in to API
@@ -72,6 +72,8 @@ for follower in followers:
   i += 1
   user_id = follower["pk"]
   _ = API.getUsernameInfo(user_id)
+  print API.LastJson
+  exit(-1)
   try:
     num_followers = API.LastJson.get(u'user').get(u'follower_count')
   except AttributeError:
@@ -118,8 +120,8 @@ for (user_id, user_followers) in follower_info:
     #
     a.append(pic.get('like_count'))
     #
-    a.append(user_followers)
     a.append(user_id)
+    a.append(user_followers)
     #
     try:
       #
@@ -139,7 +141,7 @@ for (user_id, user_followers) in follower_info:
 print "Saving data."
 with open(outfile_name, 'wb') as csvfile:
   spamwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-  spamwriter.writerow(['taken-at', 'seconds-from-midnight', 'like-count', 'user_id', 'user-followers', 'caption'])
+  spamwriter.writerow(['taken-at', 'seconds-from-midnight', 'like-count', 'user-id', 'user-followers', 'caption'])
   for data_row in data:
     spamwriter.writerow(data_row)
 
